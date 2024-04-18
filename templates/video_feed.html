@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Feed</title>
+    <style>
+        /* Add your CSS styles here */
+    </style>
+</head>
+<body>
+    <h1>Video Feed</h1>
+    <video id="videoElement" width="640" height="480" autoplay></video>
+    <br>
+    <canvas id="canvasElement" width="640" height="480"></canvas>
+    <br>
+    <button id="startButton">Start</button>
+    <button id="stopButton">Stop</button>
+    <br>
+    <button onclick="goBack()">Back</button>
+    
+    <script>
+        function goBack() {
+            window.history.back(); // Navigate back to the previous page
+        }
+
+        const video = document.getElementById('videoElement');
+        const canvas = document.getElementById('canvasElement');
+        const startButton = document.getElementById('startButton');
+        const stopButton = document.getElementById('stopButton');
+        let stream;
+
+        // Function to start capturing video from the camera
+        async function startVideo() {
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                video.srcObject = stream;
+            } catch (err) {
+                console.error('Error accessing the camera:', err);
+            }
+        }
+
+        // Function to stop capturing video
+        function stopVideo() {
+            if (stream) {
+                const tracks = stream.getTracks();
+                tracks.forEach(track => track.stop());
+                video.srcObject = null;
+            }
+        }
+
+        // Event listener for start button
+        startButton.addEventListener('click', startVideo);
+
+        // Event listener for stop button
+        stopButton.addEventListener('click', stopVideo);
+    </script>
+</body>
+</html>

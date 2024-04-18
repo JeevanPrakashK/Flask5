@@ -12,7 +12,7 @@ def access_camera():
     camera = cv2.VideoCapture(0)  
     cap_video = cv2.VideoCapture("background_video.mp4")
     
-    if not camera.isOpened():
+    if not camera.isOpened() or not camera.isOpened():
         raise RuntimeError('Error: Could not access the camera.')
     while True:
         ret_video, frame_video = cap_video.read()
@@ -28,15 +28,15 @@ def access_camera():
             # Apply mask to video frame to extract foreground
             foreground = cv2.bitwise_and(frame_video, frame_video, mask=inv_mask)
             # Resize mask to webcam frame size
-            mask = cv2.resize(mask, (frame_webcam.shape[1], frame_webcam.shape[0]))
+            mask = cv2.resize(mask, (frame.shape[1], frame.shape[0]))
             # Apply mask to webcam frame to extract background
-            background = cv2.bitwise_and(frame_webcam, frame_webcam, mask=mask)
+            background = cv2.bitwise_and(frame, frame, mask=mask)
             # Resize foreground and background to webcam frame size
-            foreground = cv2.resize(foreground, (frame_webcam.shape[1], frame_webcam.shape[0]))
-            background = cv2.resize(background, (frame_webcam.shape[1], frame_webcam.shape[0]))
+            foreground = cv2.resize(foreground, (frame.shape[1], frame.shape[0]))
+            background = cv2.resize(background, (frame.shape[1], frame.shape[0]))
             # Combine foreground and background
             final_frame = cv2.add(foreground, background)
-            ret, buffer = cv2.imencode('.jpg', frame)  # Encode the frame in JPEG format
+            ret, buffer = cv2.imencode('.jpg', final_frame)  # Encode the frame in JPEG format
             frame = buffer.tobytes()  # Convert the frame to bytes
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')  # Yield the frame in the HTTP response
